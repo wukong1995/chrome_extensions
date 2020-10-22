@@ -1,0 +1,34 @@
+{
+  "name": "wukong1995",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "permissions": ["storage", "declarativeContent", "activeTab"],
+  "page_action": {
+    "default_popup": "popup.html",
+    "defailt_icons": {
+      "16": "/images/queen16.png",
+      "32": "/images/queen32.png",
+      "48": "/images/queen48.png",
+      "128": "/images/queen128.png"
+    }
+  },
+  "options_page": "options.html",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://developer.chrome.com/*"
+      ],
+      "js": ["vendor/zepto.min.js", "content.js"]
+    }
+  ],
+  "icons": {
+    "16": "/images/wukong16.png",
+    "32": "/images/wukong32.png",
+    "48": "/images/wukong48.png",
+    "128": "/images/wukong128.png"
+  }
+}
