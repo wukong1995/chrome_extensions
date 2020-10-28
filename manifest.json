@@ -2,9 +2,8 @@
   "name": "wukong1995",
   "version": "0.0.1",
   "manifest_version": 2,
-  "permissions": ["storage", "declarativeContent", "activeTab"],
-  "page_action": {
-    "default_popup": "popup.html",
+  "permissions": ["activeTab", "tabs", "storage"],
+  "browser_action": {
     "defailt_icons": {
       "16": "/images/queen16.png",
       "32": "/images/queen32.png",
@@ -12,19 +11,14 @@
       "128": "/images/queen128.png"
     }
   },
-  "options_page": "options.html",
+  "web_accessible_resources": ["popup.html", "popup.js"],
+  "optional_permissions": ["<all_urls>"],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": false
   },
-  "content_scripts": [
-    {
-      "matches": [
-        "https://developer.chrome.com/*"
-      ],
-      "js": ["vendor/zepto.min.js", "content.js"]
-    }
-  ],
   "icons": {
     "16": "/images/wukong16.png",
     "32": "/images/wukong32.png",

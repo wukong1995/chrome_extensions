@@ -1,16 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <style>
-    button {
-      height: 30px;
-      width: 30px;
-      outline: none;
-    }
-  </style>
+  <meta charset="utf8" />
+  <title>内部上传工具</title>
+  <link href="popup.css" rel="stylesheet">
 </head>
 <body>
-  <button id="changeColor"></button>
+  <div class="container">
+    <header>
+      <h1 class="title">内部图床</h1>
+      <h2 class="desc">仅限内部使用</h2>
+    </header>
+    <p class="step">1. 选择存储地址<small>(如果没有特别需求，选择默认就行)</small></p>
+    <div>
+      <label><input type="radio" name="target" value="default" /> 默认</label>
+      <div id="target-list"></div>
+      <span class="address-add js-open-modal">增加新地址</span>
+    </div>
+
+    <p class="step">2. 选择文件</p>
+    <div id="dropzone" class="dropzone">
+      <div id="dz-message" class="dz-message">点击选择图片或者拖拽图片到这里</div>
+      <input id="input" class="dz-input" type="file" multiple accept=".jpeg, .jpg, .png,, .bmp, .tiff" />
+      <div id="dz-body" class="dz-body"></div>
+    </div>
+
+    <div class="result">
+      <div class="result-placeholder">链接地址，右键复制</div>
+      <div id="result" class="result-body"></div>
+    </div>
+  </div>
+  <div class="modal" id="modal">
+    <div class="modal-body">
+      <div class="modal-title">编辑/增加新地址</div>
+      <div class="modal-content">
+        <div class="modal-item">
+          <span class="modal-label">地址名称</span>
+          <input type="text" id="input-name" />
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">bucket名称</span>
+          <input type="text" id="input-bucket" />
+        </div>
+        <div class="modal-item">
+           <span class="modal-label">Access Key</span>
+          <input type="text" id="input-access" />
+        </div>
+        <div class="modal-item">
+           <span class="modal-label">Secret Key</span>
+          <input type="text" id="input-secret" />
+        </div>
+        <div class="modal-item">
+          <span class="modal-label">文件夹路径</span>
+          <input type="text" id="input-path" />
+          <small>必须以/结尾</small>
+        </div>
+
+        <div class="modal-item">
+          <span class="modal-label">上传完是否刷新cdn</span>
+          <input type="checkbox" id="input-refresh" />
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-dark js-close-modal">取消</button>
+          <button type="button" class="btn-primary" id="js-modal-submit">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./vendor/zepto.min.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
