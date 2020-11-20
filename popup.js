@@ -41,9 +41,9 @@
   const defaultData = {
     name: '',
     bucket: '',
-    access: '',
-    secret: '',
-    path: '',
+    accessKeyId: '',
+    accessKeySecret: '',
+    prefix: '',
     refresh: false
   }
 
@@ -62,7 +62,40 @@
     reader.readAsDataURL(file)
   })
 
-  const uploadFile = (targetAddress, base64, fileName) => {
+  const filterFile = (files) => {
+    const acceptList = ['.jpeg', '.jpg', '.png', '.bmp',]
+    const list = []
+
+    for (const file of files) {
+      const fileName = file.name.toLowerCase()
+
+      for (const suffix of acceptList) {
+        if (fileName.endsWith(suffix)) {
+          list.push(file)
+          break
+        }
+      }
+    }
+
+    return list
+  }
+
+  const uploadFile = (targetAddress, file, fileName) => {
+    return new Promise((resolve, reject) => {
+      const formData = new FormData();
+      formData.append('file', file, 'wpp_test/' + fileName);
+      formData.append('ossConfig', targetAddress)
+
+      $.ajax({
+        url: '/upload',
+        type: 'POST',
+        data: formData,
+      }).done((res) => {
+        resolve(res);
+      }).fail((error) => {
+        reject(error)
+      });
+    })
   }
   // helper function--------end
 
@@ -92,16 +125,16 @@
   const $inputBucket = $('#input-bucket')
   const $inputAccess = $('#input-access')
   const $inputSecret = $('#input-secret')
-  const $inputPath = $('#input-path')
+  const $inputPrefix = $('#input-prefix')
   const $inputFresh = $('#input-refresh')
 
   var openModal = (initData = defaultData) => {
-    const { bucket, access, secret, path, refresh, name } = initData
+    const { bucket, accessKeyId, accessKeySecret, prefix, refresh, name } = initData
     $inputName.val(name)
     $inputBucket.val(bucket)
-    $inputAccess.val(access)
-    $inputSecret.val(secret)
-    $inputPath.val(path)
+    $inputAccess.val(accessKeyId)
+    $inputSecret.val(accessKeySecret)
+    $inputPrefix.val(prefix)
     $inputFresh[0].checked = refresh
 
     $modal.addClass('t-show')
@@ -122,18 +155,18 @@
   $('#js-modal-submit').on('click', () => {
     const name = $inputName.val()
     const bucket = $inputBucket.val()
-    const access = $inputAccess.val()
-    const secret = $inputSecret.val()
-    const path = $inputPath.val()
+    const accessKeyId = $inputAccess.val()
+    const accessKeySecret = $inputSecret.val()
+    const prefix = $inputPrefix.val()
     const refresh = $inputFresh[0].checked
 
-    if (!bucket || !access || !secret || !path) {
+    if (!bucket || !accessKeyId || !accessKeySecret || !prefix) {
       alert('信息填写不完整')
       return
     }
 
     // checkData
-    if (!path.endsWith('/')) {
+    if (!prefix.endsWith('/')) {
       alert('文件夹路径必须以/结尾')
       return
     }
@@ -141,9 +174,9 @@
     addressList.push({
       name,
       bucket,
-      access,
-      secret,
-      path,
+      accessKeyId,
+      accessKeySecret,
+      prefix,
       refresh
     })
 
@@ -175,7 +208,6 @@
     $result.append(urlList.map(url => `<div>${url}</div>`))
   }
 
-
   const resolveFiles = async (files) => {
     if (!files || files.length === 0) {
       return
@@ -183,6 +215,7 @@
 
     const promiseAll = []
     const targetAddress = getCurrentAddress()
+    const urlPrefix = targetAddress && targetAddress.prefix || '/'
 
     try {
       for (const file of files) {
@@ -193,11 +226,11 @@
       addImgsToList(base64List, files)
 
       const resList = []
-      for (let i = 0; i < base64List.length; i++) {
+      for (let i = 0; i < files.length; i++) {
         try {
-          const base64 = base64List[i]
-          const fileName = files[i].name
-          const res = await uploadFile(targetAddress, base64, fileName)
+          const file = files[i]
+          const fileName = file.name
+          const res = await uploadFile(targetAddress, file, urlPrefix + fileName)
           resList.push(res.imgUrl)
         } catch (error) {
           resList.push('上传失败，请重试')
@@ -232,7 +265,7 @@
       event.preventDefault()
       
       const { files } = event.dataTransfer
-      resolveFiles(files)
+      resolveFiles(filterFile(files))
     })
   // input----------end
 })()
