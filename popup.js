@@ -28,9 +28,9 @@
 
   const changeAddressList = (targetList, cb) => {
     addressList = targetList
-    const html = targetList.map((item, index) => `<div>
+    const html = targetList.map((item, index) => `<div class="address-item">
       <label><input type="radio" name="target" value="${index}" /> ${item.name}</label> 
-      [<span class="address-delete js-address-delete" data-index="${index}"> del </span>]
+      [<span class="address-del js-address-delete" data-index="${index}"> 删除 </span>]
       </div>`)
     $targetList.html(html)
     chrome.storage.sync.set({ targetList }, function () {
@@ -83,17 +83,25 @@
   const uploadFile = (targetAddress, file, fileName) => {
     return new Promise((resolve, reject) => {
       const formData = new FormData();
-      formData.append('file', file, 'wpp_test/' + fileName);
-      formData.append('ossConfig', targetAddress)
+      formData.append('file', file, fileName);
+      if (targetAddress) {
+        Object.keys(targetAddress).forEach(key => {
+          formData.append(key, targetAddress[key])
+        })
+      }
 
       $.ajax({
-        url: '/upload',
+        url: 'http://localhost:65534/upload',
         type: 'POST',
+        contentType: false,
+        processData: false,
         data: formData,
-      }).done((res) => {
-        resolve(res);
-      }).fail((error) => {
-        reject(error)
+        success: (res) => {
+          resolve(res);
+        },
+        error: (error) => {
+          reject(error)
+        }
       });
     })
   }
@@ -110,7 +118,7 @@
   })
 
   const getCurrentAddress = () => {
-    const inputValue = $('input[name="target"]').val()
+    const inputValue = $('input[name="target"]:checked').val()
 
     if (/[0-9]+/.test(inputValue)) {
       return addressList[inputValue]

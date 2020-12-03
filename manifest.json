@@ -2,7 +2,7 @@
   "name": "wukong1995",
   "version": "0.0.1",
   "manifest_version": 2,
-  "permissions": ["activeTab", "tabs", "storage"],
+  "permissions": ["activeTab", "tabs", "storage", "http://localhost:65534/*"],
   "browser_action": {
     "defailt_icons": {
       "16": "/images/queen16.png",

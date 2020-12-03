@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+body {
+  font-size: 14px;
+}
+
 input[type="text"] {
   width: 300px;
   height: 36px;
@@ -64,14 +68,20 @@ header {
   margin: 24px 0 16px;
 }
 
+.address-item {
+  margin: 4px 0;
+}
+
 .address-add {
   display: inline-block;
   margin-top: 8px;
   color: #6e8192;
+  cursor: pointer;
 }
 
 .address-del {
   color: #3968d4;
+  cursor: pointer;
 }
 
 .dropzone {
